@@ -1,0 +1,30 @@
+[package]
+name = "tinydtls-sys"
+version = "0.1.0-alpha.1+tinydtls-c8d2def"
+edition = "2021"
+links = "tinydtls"
+# For tinydtls, both licenses can be applied, see https://www.eclipse.org/legal/eplfaq.php#DUALLIC
+# BSD-3-CLAUSE is equivalent to the EDL v1.0, see https://www.eclipse.org/org/documents/edl-v10.php
+# First bracket is the license for TinyDTLS, the remainder is for code included with tinydtls.
+license = "(EPL-1.0 OR BSD-3-CLAUSE) AND BSD-1-Clause AND BSD-3-CLAUSE AND MIT"
+exclude = ['src/tinydtls/share/', 'src/tinydtls/include', 'src/tinydtls/configure.prev']
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[features]
+default = ["vendored"]
+# Use a vendored version of tinydtls
+vendored = ["static"]
+# Attempt static linking to tinydtls
+static = []
+
+# Enable ECC functionality in vendored library
+ecc = []
+# Enable PSK functionality in vendored library
+psk = []
+
+[dependencies]
+libc = "^0.2"
+
+[build-dependencies]
+bindgen = "0.59.2"
+autotools = "0.2.3"
