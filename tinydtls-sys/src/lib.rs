@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: EPL-1.0 OR BSD-3-CLAUSE
 // Bindgen translates the C headers, clippy's and rustfmt's recommendations are not applicable here.
 #![allow(clippy::all)]
 #![allow(non_camel_case_types)]

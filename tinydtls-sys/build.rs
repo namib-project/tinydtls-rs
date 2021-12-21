@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: EPL-1.0 OR BSD-3-CLAUSE
 use std::{
     env,
     io::ErrorKind,
