@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: EPL-1.0 OR BSD-3-CLAUSE
+/*
+ * build.rs - build script for TinyDTLS Rust bindings.
+ * Copyright (c) 2021 The NAMIB Project Developers, all rights reserved.
+ * See the README as well as the LICENSE file for more information.
+ */
 use std::{
     env,
-    io::ErrorKind,
     path::{Path, PathBuf},
     process::Command,
 };
@@ -9,7 +13,7 @@ use std::{
 use bindgen::EnumVariation;
 
 fn main() {
-    println!("cargo:rerun-if-changed=src/tinydtls");
+    println!("cargo:rerun-if-changed=src/tinydtls/");
     println!("cargo:rerun-if-changed=tinydtls_wrapper.h");
     println!("cargo:rerun-if-changed=build.rs");
     let mut bindgen_builder = bindgen::Builder::default();
@@ -18,7 +22,20 @@ fn main() {
     if cfg!(feature = "vendored") {
         // Read required environment variables.
         let out_dir = std::env::var_os("OUT_DIR").unwrap();
-        let tinydtls_src_dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("src").join("tinydtls");
+
+        // TinyDTLS does not like being built out of source, but we get verification errors if files
+        // in the source package are modified.
+        // Therefore, we copy tinydtls over to the output directory and build from there.
+        let mut copy_options = fs_extra::dir::CopyOptions::default();
+        copy_options.overwrite = true;
+        fs_extra::dir::copy(
+            Path::new(env!("CARGO_MANIFEST_DIR")).join("src").join("tinydtls"),
+            &out_dir,
+            &copy_options,
+        )
+        .unwrap();
+        let tinydtls_src_dir = Path::new(&out_dir).join("tinydtls");
+
         // Read Makeflags into vector of strings
         let make_flags = std::env::var_os("CARGO_MAKEFLAGS")
             .unwrap()
@@ -28,31 +45,27 @@ fn main() {
             .map(String::from)
             .collect();
 
-        Command::new("autoconf")
+        // Run autogen to generate necessary build files.
+        Command::new(tinydtls_src_dir.join("autogen.sh"))
             .current_dir(&tinydtls_src_dir)
             .status()
             .unwrap();
 
+        // Run make clean
         autotools::Config::new(&tinydtls_src_dir)
             .insource(true)
             .out_dir(&out_dir)
             .make_target("clean")
             .build();
-        let mut build_config = autotools::Config::new(&tinydtls_src_dir);
-        build_config.insource(true).out_dir(out_dir);
 
-        // Is not deleted by default for some reason
-        if let Err(e) = std::fs::remove_dir_all(&tinydtls_src_dir.join("include").join("tinydtls")) {
-            match e.kind() {
-                ErrorKind::NotFound => {},
-                e => panic!("Error deleting old tinydtls include directory: {:?}", e),
-            }
-        }
+        // Create build configuration instance and enable in-source builds.
+        let mut build_config = autotools::Config::new(&tinydtls_src_dir);
+        build_config.insource(true).out_dir(&out_dir);
 
         // Set Makeflags
         build_config.make_args(make_flags);
 
-        // Enable debug symbols if enabled in Rust
+        // Enable debug symbols if enabled in Rust.
         match std::env::var_os("DEBUG").unwrap().to_str().unwrap() {
             "0" | "false" => {},
             _ => {
@@ -70,23 +83,31 @@ fn main() {
 
         // Add the built library to the search path
         println!("cargo:rustc-link-search=native={}", dst.join("lib").to_str().unwrap());
+        // Set some values that can be used by other crates that have to interact with the C library
+        // directly, see https://doc.rust-lang.org/cargo/reference/build-scripts.html#the-links-manifest-key
+        // for more info.
         println!("cargo:include={}", dst.join("include").to_str().unwrap());
         println!("cargo:libs={}", dst.to_str().unwrap());
+
+        // Tell bindgen to look for the right header files.
         bindgen_builder = bindgen_builder
             .clang_arg(format!("-I{}", dst.join("include").join("tinydtls").to_str().unwrap()))
             .clang_arg(format!("-I{}", dst.join("include").to_str().unwrap()));
     }
 
+    // Instruct cargo to link to the TinyDTLS C library, either statically or dynamically.
     println!(
         "cargo:rustc-link-lib={}tinydtls",
         cfg!(feature = "static").then(|| "static=").unwrap_or("")
     );
 
+    // Customize and configure generated bindings.
     bindgen_builder = bindgen_builder
         .header("src/wrapper.h")
         .parse_callbacks(Box::new(bindgen::CargoCallbacks))
         .default_enum_style(EnumVariation::Rust { non_exhaustive: true })
         .rustfmt_bindings(false)
+        // Declarations that should be part of the bindings.
         .allowlist_function("dtls_.*")
         .allowlist_type("dtls_.*")
         .allowlist_var("dtls_.*")
@@ -121,13 +142,11 @@ fn main() {
         .blocklist_type("(__)?socklen_t")
         .blocklist_type("sa_family_t")
         .blocklist_type("__fd_mask")
-        // Are generated because they are typedef-ed inside of the C headers, blocklisting them
-        // will instead replace them with the appropriate rust types.
-        // See https://github.com/rust-lang/rust-bindgen/issues/1215 for an open issue concerning
-        // this problem.
+        // size_t matches usize in our case here.
         .size_t_is_usize(true);
-    let bindings = bindgen_builder.generate().unwrap();
 
+    // Run binding generation and write the output to a file.
+    let bindings = bindgen_builder.generate().expect("Could not generate bindings!");
     let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
     bindings.write_to_file(out_path.join("bindings.rs")).unwrap();
 }

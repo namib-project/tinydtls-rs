@@ -6,6 +6,9 @@ which accompany this distribution.
 The Eclipse Public License is also available at http://www.eclipse.org/legal/epl-v10.html
 and the 3-Clause BSD License is also available at https://opensource.org/licenses/BSD-3-Clause.
 
+The underlying TinyDTLS library also includes third-party code for which different licensing terms might apply.
+See tinydtls-sys/src/tinydtls/ABOUT.md and tinydtls-sys/src/tinydtls/LICENSE for more information.
+
 3-Clause BSD License
 
 Copyright 2021 The NAMIB project contributors
