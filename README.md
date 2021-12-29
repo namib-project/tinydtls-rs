@@ -8,8 +8,8 @@ Matching the license of the tinydtls C library, this library is made available b
 the terms of the Eclipse Public License v1.0 and 3-Clause BSD License (which the 
 Eclipse Distribution License v1.0 that is used for tinydtls is based on).
 
-You may choose at your own option which of the two licenses you wish to use. This also 
-applies to the tinydtls C library, see https://www.eclipse.org/legal/eplfaq.php#DUALLIC
+You may choose at your own option which of the two licenses you wish to use for the Rust 
+crate code and the TinyDTLS C library itself, see https://www.eclipse.org/legal/eplfaq.php#DUALLIC.
 
 Additionally, the tinydtls C library contains third party code that might be included
 in compiled binaries that link to tinydtls.
