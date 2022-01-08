@@ -12,7 +12,8 @@ links = "tinydtls"
 # First bracket is the license for TinyDTLS, the remainder is for code included with tinydtls.
 license = "(EPL-1.0 OR BSD-3-CLAUSE) AND BSD-1-Clause AND BSD-3-CLAUSE AND MIT"
 readme = "README.md"
-homepage = "https://namib.me/"
+homepage = "https://github.com/namib-project/tinydtls-rs"
+repository = "https://github.com/namib-project/tinydtls-rs"
 authors = ["Hugo Hakim Damer <hdamer@uni-bremen.de>"]
 categories = ["external-ffi-bindings", "network-programming", "cryptography", "embedded"]
 keywords = ["tinydtls", "sys", "dtls", "crypto"]
@@ -35,6 +36,6 @@ psk = []
 libc = "^0.2"
 
 [build-dependencies]
-bindgen = "0.59.2"
-autotools = "0.2.3"
-fs_extra = "1.2.0"
+bindgen = "^0.59.2"
+autotools = "^0.2.3"
+fs_extra = "^1.2"
