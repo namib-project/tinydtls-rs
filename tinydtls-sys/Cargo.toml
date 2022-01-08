@@ -35,6 +35,9 @@ psk = []
 [dependencies]
 libc = "^0.2"
 
+[dev-dependencies]
+lazy_static = "^1.4"
+
 [build-dependencies]
 bindgen = "^0.59.2"
 autotools = "^0.2.3"
