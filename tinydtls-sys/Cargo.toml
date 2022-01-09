@@ -4,7 +4,7 @@
 [package]
 name = "tinydtls-sys"
 description = "Raw bindings to the TinyDTLS library."
-version = "0.1.0-alpha.1+tinydtls-c8d2def"
+version = "0.1.0-alpha.1+tinydtls-68f6045"
 edition = "2021"
 links = "tinydtls"
 # For tinydtls, both licenses can be applied, see https://www.eclipse.org/legal/eplfaq.php#DUALLIC
@@ -21,7 +21,7 @@ exclude = ['/src/tinydtls/share/', '/src/tinydtls/include/', '/src/tinydtls/conf
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [features]
-default = ["vendored"]
+default = ["vendored", "static", "ecc", "psk"]
 # Use a vendored version of tinydtls
 vendored = ["static"]
 # Attempt static linking to tinydtls
@@ -33,7 +33,7 @@ ecc = []
 psk = []
 
 [dependencies]
-libc = "^0.2"
+libc = "^0.2.112"
 
 [dev-dependencies]
 lazy_static = "^1.4"
