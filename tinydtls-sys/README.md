@@ -2,6 +2,16 @@
 
 Raw bindings to the [tinydtls C library](https://github.com/eclipse/tinydtls).
 
+## Features
+These features affect the way that the binding is built:
+- `vendored` (default): Build and use a vendored version of tinydtls instead of linking to an existing one.
+- `static` (default): Use static linking instead of dynamic linking
+
+These features affect the functionality of the library (only apply if `vendored` is enabled, we can't control features 
+of binaries that are already built):
+- `ecc` (default): Enable ECC functionality
+- `psk` (default): Enable PSK functionality
+
 ## License
 
 Matching the license of the tinydtls C library, this library is made available both under
