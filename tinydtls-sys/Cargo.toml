@@ -4,13 +4,13 @@
 [package]
 name = "tinydtls-sys"
 description = "Raw bindings to the TinyDTLS library."
-version = "0.1.0-alpha.1+tinydtls-68f6045"
+version = "0.1.0+tinydtls-68f6045"
 edition = "2021"
 links = "tinydtls"
 # For tinydtls, both licenses can be applied, see https://www.eclipse.org/legal/eplfaq.php#DUALLIC
 # BSD-3-CLAUSE is equivalent to the EDL v1.0, see https://www.eclipse.org/org/documents/edl-v10.php
 # First bracket is the license for TinyDTLS, the remainder is for code included with tinydtls.
-license = "(EPL-1.0 OR BSD-3-CLAUSE) AND BSD-1-Clause AND BSD-3-CLAUSE AND MIT"
+license = "(EPL-1.0 OR BSD-3-Clause) AND BSD-1-Clause AND BSD-3-Clause AND MIT"
 readme = "README.md"
 homepage = "https://github.com/namib-project/tinydtls-rs"
 repository = "https://github.com/namib-project/tinydtls-rs"
