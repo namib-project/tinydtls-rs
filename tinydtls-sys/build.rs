@@ -26,8 +26,10 @@ fn main() {
         // TinyDTLS does not like being built out of source, but we get verification errors if files
         // in the source package are modified.
         // Therefore, we copy tinydtls over to the output directory and build from there.
-        let mut copy_options = fs_extra::dir::CopyOptions::default();
-        copy_options.overwrite = true;
+        let copy_options = fs_extra::dir::CopyOptions {
+            overwrite: true,
+            ..Default::default()
+        };
         fs_extra::dir::copy(
             Path::new(env!("CARGO_MANIFEST_DIR")).join("src").join("tinydtls"),
             &out_dir,
@@ -41,7 +43,7 @@ fn main() {
             .unwrap()
             .into_string()
             .unwrap()
-            .split(" ")
+            .split(' ')
             .map(String::from)
             .collect();
 
@@ -67,10 +69,10 @@ fn main() {
 
         // Enable debug symbols if enabled in Rust.
         match std::env::var_os("DEBUG").unwrap().to_str().unwrap() {
-            "0" | "false" => {},
+            "0" | "false" => {}
             _ => {
                 build_config.with("debug", None);
-            },
+            }
         }
 
         // Enable dependency features based on selected cargo features.

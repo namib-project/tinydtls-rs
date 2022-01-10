@@ -4,7 +4,7 @@
 [package]
 name = "tinydtls-sys"
 description = "Raw bindings to the TinyDTLS library."
-version = "0.1.0-alpha.1+tinydtls-c8d2def"
+version = "0.1.0-alpha.1+tinydtls-68f6045"
 edition = "2021"
 links = "tinydtls"
 # For tinydtls, both licenses can be applied, see https://www.eclipse.org/legal/eplfaq.php#DUALLIC
@@ -12,7 +12,8 @@ links = "tinydtls"
 # First bracket is the license for TinyDTLS, the remainder is for code included with tinydtls.
 license = "(EPL-1.0 OR BSD-3-CLAUSE) AND BSD-1-Clause AND BSD-3-CLAUSE AND MIT"
 readme = "README.md"
-homepage = "https://namib.me/"
+homepage = "https://github.com/namib-project/tinydtls-rs"
+repository = "https://github.com/namib-project/tinydtls-rs"
 authors = ["Hugo Hakim Damer <hdamer@uni-bremen.de>"]
 categories = ["external-ffi-bindings", "network-programming", "cryptography", "embedded"]
 keywords = ["tinydtls", "sys", "dtls", "crypto"]
@@ -20,7 +21,7 @@ exclude = ['/src/tinydtls/share/', '/src/tinydtls/include/', '/src/tinydtls/conf
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [features]
-default = ["vendored"]
+default = ["vendored", "static", "ecc", "psk"]
 # Use a vendored version of tinydtls
 vendored = ["static"]
 # Attempt static linking to tinydtls
@@ -32,9 +33,12 @@ ecc = []
 psk = []
 
 [dependencies]
-libc = "^0.2"
+libc = "^0.2.112"
+
+[dev-dependencies]
+lazy_static = "^1.4"
 
 [build-dependencies]
-bindgen = "0.59.2"
-autotools = "0.2.3"
-fs_extra = "1.2.0"
+bindgen = "^0.59.2"
+autotools = "^0.2.3"
+fs_extra = "^1.2"
