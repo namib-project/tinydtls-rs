@@ -39,7 +39,7 @@ fn main() {
         let tinydtls_src_dir = Path::new(&out_dir).join("tinydtls");
 
         // Read Makeflags into vector of strings
-        let make_flags = std::env::var_os("CARGO_MAKEFLAGS")
+        let _make_flags: String = std::env::var_os("CARGO_MAKEFLAGS")
             .unwrap()
             .into_string()
             .unwrap()
@@ -65,7 +65,7 @@ fn main() {
         build_config.insource(true).out_dir(&out_dir);
 
         // Set Makeflags
-        build_config.make_args(make_flags);
+        //build_config.make_args(make_flags);
 
         // Enable debug symbols if enabled in Rust.
         match std::env::var_os("DEBUG").unwrap().to_str().unwrap() {
@@ -76,9 +76,12 @@ fn main() {
         }
 
         // Enable dependency features based on selected cargo features.
-        build_config
-            .enable("ecc", Some(if cfg!(feature = "ecc") { "yes" } else { "no" }))
-            .enable("psk", Some(if cfg!(feature = "psk") { "yes" } else { "no" }));
+        if !cfg!(feature = "ecc") {
+            build_config.without("ecc", None);
+        }
+        if !cfg!(feature = "psk") {
+            build_config.without("psk", None);
+        }
 
         // Run build
         let dst = build_config.build();
