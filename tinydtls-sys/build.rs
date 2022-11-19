@@ -112,6 +112,8 @@ fn main() {
         .parse_callbacks(Box::new(bindgen::CargoCallbacks))
         .default_enum_style(EnumVariation::Rust { non_exhaustive: true })
         .rustfmt_bindings(false)
+        // Some types cannot have `Debug` as they are packed and have non-Copy fields.
+        .no_debug("dtls_hello_verify_t")
         // Declarations that should be part of the bindings.
         .allowlist_function("dtls_.*")
         .allowlist_type("dtls_.*")
