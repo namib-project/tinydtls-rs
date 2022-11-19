@@ -62,17 +62,20 @@ fn main() {
 
         // Create build configuration instance and enable in-source builds.
         let mut build_config = autotools::Config::new(&tinydtls_src_dir);
-        build_config.insource(true).out_dir(&out_dir);
+        build_config
+            .insource(true)
+            .out_dir(&out_dir)
+            .make_args(vec!["-W".to_string(), "doc".to_string()]);
 
         // Set Makeflags
         //build_config.make_args(make_flags);
 
         // Enable debug symbols if enabled in Rust.
         match std::env::var_os("DEBUG").unwrap().to_str().unwrap() {
-            "0" | "false" => {}
+            "0" | "false" => {},
             _ => {
                 build_config.with("debug", None);
-            }
+            },
         }
 
         // Enable dependency features based on selected cargo features.
@@ -109,7 +112,6 @@ fn main() {
     // Customize and configure generated bindings.
     bindgen_builder = bindgen_builder
         .header("src/wrapper.h")
-        .parse_callbacks(Box::new(bindgen::CargoCallbacks))
         .default_enum_style(EnumVariation::Rust { non_exhaustive: true })
         .rustfmt_bindings(false)
         // Some types cannot have `Debug` as they are packed and have non-Copy fields.
@@ -151,6 +153,13 @@ fn main() {
         .blocklist_type("__fd_mask")
         // size_t matches usize in our case here.
         .size_t_is_usize(true);
+    if !cfg!(feature = "vendored") {
+        // Triggers a rebuild on every cargo build invocation if used for the vendored version, as
+        // the included headers seem to come from our built version.
+        // Should be fine though, as we already printed `cargo:rerun-if-changed=src/tinydtls/` at the
+        // start of the file.
+        bindgen_builder = bindgen_builder.parse_callbacks(Box::new(bindgen::CargoCallbacks));
+    }
 
     // Run binding generation and write the output to a file.
     let bindings = bindgen_builder.generate().expect("Could not generate bindings!");
