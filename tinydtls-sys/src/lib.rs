@@ -12,6 +12,8 @@
 #![allow(non_upper_case_globals)]
 #![allow(deref_nullptr)]
 
+use std::fmt;
+
 use libc::{sockaddr, sockaddr_in, sockaddr_in6, sockaddr_storage, socklen_t};
 
 #[cfg(target_family = "windows")]
@@ -30,6 +32,19 @@ include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 #[inline]
 pub unsafe fn dtls_set_handler(ctx: *mut dtls_context_t, h: *mut dtls_handler_t) {
     (*ctx).h = h;
+}
+
+// For backwards-compatibility, we add a Debug implementation of dtls_hello_verify_t.
+// (Automatic derive stopped working with https://github.com/rust-lang/rust/pull/104429.)
+impl fmt::Debug for dtls_hello_verify_t {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let Self { version, cookie_length, cookie } = self;
+        fmt.debug_struct("dtls_hello_verify_t")
+            .field("version", version)
+            .field("cookie_length", cookie_length)
+            .field("cookie", cookie)
+            .finish()
+    }
 }
 
 #[cfg(test)]
