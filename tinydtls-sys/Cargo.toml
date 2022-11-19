@@ -4,7 +4,7 @@
 [package]
 name = "tinydtls-sys"
 description = "Raw bindings to the TinyDTLS library."
-version = "0.1.1+tinydtls-c7c3ca8"
+version = "0.1.2+tinydtls-c84e36f"
 edition = "2021"
 links = "tinydtls"
 # For tinydtls, both licenses can be applied, see https://www.eclipse.org/legal/eplfaq.php#DUALLIC

@@ -1,4 +1,4 @@
 [submodule "tinydtls-sys/src/tinydtls"]
 	path = tinydtls-sys/src/tinydtls
 	url = https://github.com/eclipse/tinydtls.git
-	branch = develop
+	branch = main
