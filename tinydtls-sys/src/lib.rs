@@ -402,6 +402,7 @@ mod tests {
             get_psk_info: Some(echo_get_psk_info),
             get_ecdsa_key: None,
             verify_ecdsa_key: None,
+            get_user_parameters: None,
         };
 
         // SAFETY: Supplied pointer is valid, dtls_new_context does not do anything with it except
@@ -433,8 +434,6 @@ mod tests {
         // this pointer should be valid up until here.
         unsafe {
             dtls_free_context(server_context);
-            // To ensure that we don't use the context pointer sometime later (in case the tests are extended later on), we drop the pointer.
-            std::mem::drop(server_context);
         }
     }
 
@@ -463,6 +462,7 @@ mod tests {
             get_psk_info: Some(echo_get_psk_info),
             get_ecdsa_key: None,
             verify_ecdsa_key: None,
+            get_user_parameters: None,
         };
 
         let client_socket = UdpSocket::bind("localhost:0").expect("Could not bind UDP socket");
@@ -512,8 +512,6 @@ mod tests {
         // this pointer should be valid up until here.
         unsafe {
             dtls_free_context(client_context);
-            // To ensure that we don't use the context pointer sometime later (in case the tests are extended later on), we drop the pointer.
-            std::mem::drop(client_context);
         }
         server_thread.join().unwrap();
     }

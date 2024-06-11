@@ -113,7 +113,7 @@ fn main() {
     bindgen_builder = bindgen_builder
         .header("src/wrapper.h")
         .default_enum_style(EnumVariation::Rust { non_exhaustive: true })
-        .rustfmt_bindings(false)
+        .formatter(bindgen::Formatter::None)
         // Some types cannot have `Debug` as they are packed and have non-Copy fields.
         .no_debug("dtls_hello_verify_t")
         // Declarations that should be part of the bindings.
@@ -158,7 +158,7 @@ fn main() {
         // the included headers seem to come from our built version.
         // Should be fine though, as we already printed `cargo:rerun-if-changed=src/tinydtls/` at the
         // start of the file.
-        bindgen_builder = bindgen_builder.parse_callbacks(Box::new(bindgen::CargoCallbacks));
+        bindgen_builder = bindgen_builder.parse_callbacks(Box::new(bindgen::CargoCallbacks::new()));
     }
 
     // Run binding generation and write the output to a file.
